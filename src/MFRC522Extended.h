@@ -6,14 +6,14 @@
 #ifndef MFRC522Extended_h
 #define MFRC522Extended_h
 
-#include <Arduino.h>
+#include <lgpio.h>
 #include "MFRC522.h"
 
 class MFRC522Extended : public MFRC522 {
 		
 public:
 	// ISO/IEC 14443-4 bit rates
-	enum TagBitRates : byte {
+	enum TagBitRates : uint8_t {
 		BITRATE_106KBITS = 0x00,
 		BITRATE_212KBITS = 0x01,
 		BITRATE_424KBITS = 0x02,
@@ -22,8 +22,8 @@ public:
 
 	// Structure to store ISO/IEC 14443-4 ATS
 	typedef struct {
-		byte size;
-		byte fsc;                 // Frame size for proximity card
+		uint8_t size;
+		uint8_t fsc;                 // Frame size for proximity card
 
 		struct {
 			bool transmitted;
@@ -34,8 +34,8 @@ public:
 
 		struct {
 			bool transmitted;
-			byte fwi;			// Frame waiting time integer
-			byte sfgi;			// Start-up frame guard time integer
+			uint8_t fwi;			// Frame waiting time integer
+			uint8_t sfgi;			// Start-up frame guard time integer
 		} tb1;
 
 		struct {
@@ -45,7 +45,7 @@ public:
 		} tc1;
 
 		// Raw data from ATS
-		byte data[FIFO_SIZE - 2]; // ATS cannot be bigger than FSD - 2 bytes (CRC), according to ISO 14443-4 5.2.2
+		uint8_t data[FIFO_SIZE - 2]; // ATS cannot be bigger than FSD - 2 bytes (CRC), according to ISO 14443-4 5.2.2
 	} Ats;
 
 	// A struct used for passing the PICC information
@@ -61,13 +61,13 @@ public:
 	// A struct used for passing PCB Block
 	typedef struct {
 		struct {
-			byte pcb;
-			byte cid;
-			byte nad;
+			uint8_t pcb;
+			uint8_t cid;
+			uint8_t nad;
 		} prologue;
 		struct {
-			byte size;
-			byte *data;
+			uint8_t size;
+			uint8_t *data;
 		} inf;
 	} PcbBlock;
 	
@@ -84,7 +84,7 @@ public:
 	/////////////////////////////////////////////////////////////////////////////////////
 	// Functions for communicating with PICCs
 	/////////////////////////////////////////////////////////////////////////////////////
-	StatusCode PICC_Select(Uid *uid, byte validBits = 0) override; // overrride
+	StatusCode PICC_Select(Uid *uid, uint8_t validBits = 0) override; // overrride
 	StatusCode PICC_RequestATS(Ats *ats);
 	StatusCode PICC_PPS();	                                                  // PPS command without bitrate parameter
 	StatusCode PICC_PPS(TagBitRates sendBitRate, TagBitRates receiveBitRate); // Different D values
@@ -93,8 +93,8 @@ public:
 	// Functions for communicating with ISO/IEC 14433-4 cards
 	/////////////////////////////////////////////////////////////////////////////////////
 	StatusCode TCL_Transceive(PcbBlock *send, PcbBlock *back);
-	StatusCode TCL_Transceive(TagInfo * tag, byte *sendData, byte sendLen, byte *backData = NULL, byte *backLen = NULL);
-	StatusCode TCL_TransceiveRBlock(TagInfo *tag, bool ack, byte *backData = NULL, byte *backLen = NULL);
+	StatusCode TCL_Transceive(TagInfo * tag, uint8_t *sendData, uint8_t sendLen, uint8_t *backData = NULL, uint8_t *backLen = NULL);
+	StatusCode TCL_TransceiveRBlock(TagInfo *tag, bool ack, uint8_t *backData = NULL, uint8_t *backLen = NULL);
 	StatusCode TCL_Deselect(TagInfo *tag);
 	
 	/////////////////////////////////////////////////////////////////////////////////////
