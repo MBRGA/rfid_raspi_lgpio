@@ -70,7 +70,7 @@ void MFRC522::PCD_WriteRegister(PCD_Register reg, ///< The register to write to.
 								uint8_t value		  ///< The value to write.
 )
 {
-	char data[2] { reg, static_cast<char>(value) };
+	char data[2] { static_cast<char>(reg), static_cast<char>(value) };
 
 	lgGpioWrite(_gpioHandle, _chipSelectPin, LG_LOW);
 	lgSpiWrite(_spiHandle, data, 2);
@@ -156,7 +156,6 @@ void MFRC522::PCD_ReadRegister(PCD_Register reg, ///< The register to read from.
 	}
 	// Serial.print(F("Reading ")); 	Serial.print(count); Serial.println(F(" bytes from register."));
 	const uint8_t address = 0x80 | reg;										// MSB == 1 is for reading. LSB is not used in address. Datasheet section 8.1.2.3.
-	uint8_t index = 0;															  		// Index in values array.
 
 	vector<uint8_t> txBuf(count+1, address);												// For each byte read we will be sending address
 	txBuf[count] = 0;																// except for the last request where we will send 0
@@ -876,7 +875,7 @@ MFRC522::StatusCode MFRC522::PICC_Select(Uid *uid,		///< Pointer to Uid struct. 
 			}
 			for (count = 0; count < uint8_tsToCopy; count++)
 			{
-				buffer[index++] = uid->uiduint8_t[uidIndex + count];
+				buffer[index++] = uid->uidByte[uidIndex + count];
 			}
 		}
 		// Now that the data has been copied we need to include the 8 bits in CT in currentLevelKnownBits
@@ -977,7 +976,7 @@ MFRC522::StatusCode MFRC522::PICC_Select(Uid *uid,		///< Pointer to Uid struct. 
 		uint8_tsToCopy = (buffer[2] == PICC_CMD_CT) ? 3 : 4;
 		for (count = 0; count < uint8_tsToCopy; count++)
 		{
-			uid->uiduint8_t[uidIndex + count] = buffer[index++];
+			uid->uidByte[uidIndex + count] = buffer[index++];
 		}
 
 		// Check response SAK (Select Acknowledge)
@@ -1087,7 +1086,7 @@ MFRC522::StatusCode MFRC522::PCD_Authenticate(uint8_t command,	   ///< PICC_CMD_
 	// but it requires cascade tag (CT) byte, that is not part of uid.
 	for (uint8_t i = 0; i < 4; i++)
 	{ // The last 4 bytes of the UID
-		sendData[8 + i] = uid->uiduint8_t[i + uid->size - 4];
+		sendData[8 + i] = uid->uidByte[i + uid->size - 4];
 	}
 
 	// Start the authentication.
@@ -1704,11 +1703,11 @@ void MFRC522::PICC_DumpDetailsToSerial(Uid *uid ///< Pointer to Uid struct retur
 	cout << "Card UID:" << std::hex << std::uppercase;
 	for (uint8_t i = 0; i < uid->size; i++)
 	{
-		if (uid->uiduint8_t[i] < 0x10)
+		if (uid->uidByte[i] < 0x10)
 			cout << " 0";
 		else
 			cout << " ";
-		cout << uid->uiduint8_t[i];
+		cout << uid->uidByte[i];
 	}
 	cout << endl;
 

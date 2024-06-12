@@ -130,7 +130,7 @@ MFRC522::StatusCode MFRC522Extended::PICC_Select(	Uid *uid,			///< Pointer to Ui
 				uint8_tsToCopy = maxuint8_ts;
 			}
 			for (count = 0; count < uint8_tsToCopy; count++) {
-				buffer[index++] = uid->uiduint8_t[uidIndex + count];
+				buffer[index++] = uid->uidByte[uidIndex + count];
 			}
 		}
 		// Now that the data has been copied we need to include the 8 bits in CT in currentLevelKnownBits
@@ -216,7 +216,7 @@ MFRC522::StatusCode MFRC522Extended::PICC_Select(	Uid *uid,			///< Pointer to Ui
 		index			= (buffer[2] == PICC_CMD_CT) ? 3 : 2; // source index in buffer[]
 		uint8_tsToCopy		= (buffer[2] == PICC_CMD_CT) ? 3 : 4;
 		for (count = 0; count < uint8_tsToCopy; count++) {
-			uid->uiduint8_t[uidIndex + count] = buffer[index++];
+			uid->uidByte[uidIndex + count] = buffer[index++];
 		}
 		
 		// Check response SAK (Select Acknowledge)
@@ -835,7 +835,7 @@ MFRC522::StatusCode MFRC522Extended::TCL_Transceive(TagInfo *tag, uint8_t *sendD
 	// Swap block number on success
 	tag->blockNumber = !tag->blockNumber;
 
-	if (backData && (backLen > 0)) {
+	if (backData && (backLen != 0)) {
 		if (*backLen < in.inf.size)
 			return STATUS_NO_ROOM;
 
@@ -858,7 +858,7 @@ MFRC522::StatusCode MFRC522Extended::TCL_Transceive(TagInfo *tag, uint8_t *sendD
 		if (result != STATUS_OK)
 			return result;
 
-		if (backData && (backLen > 0)) {
+		if (backData && (backLen != 0)) { 
 			if ((*backLen + ackDataSize) > totalBackLen)
 				return STATUS_NO_ROOM;
 
@@ -1067,11 +1067,11 @@ void MFRC522Extended::PICC_DumpDetailsToSerial(TagInfo *tag	///< Pointer to TagI
 	// UID
 	cout << "Card UID:";
 	for (uint8_t i = 0; i < tag->uid.size; i++) {
-		if (tag->uid.uiduint8_t[i] < 0x10)
+		if (tag->uid.uidByte[i] < 0x10)
 			cout << " 0";
 		else
 			cout << " ";
-		cout << hex << tag->uid.uiduint8_t[i] << dec;
+		cout << hex << (tag->uid.uidByte[i]) << dec;
 	}
 	cout << endl;
 
@@ -1079,12 +1079,12 @@ void MFRC522Extended::PICC_DumpDetailsToSerial(TagInfo *tag	///< Pointer to TagI
 	cout << "Card SAK: ";
 	if (tag->uid.sak < 0x10)
 		cout << "0";
-	cout << hextag->uid.sak << dec;
+	cout << hex << (tag->uid.sak) << dec;
 
 	// (suggested) PICC type
 	PICC_Type piccType = PICC_GetType(tag);
-	Serial.print(F("PICC type: "));
-	Serial.println(PICC_GetTypeName(piccType));
+	cout << "PICC type: " << PICC_GetTypeName(piccType) << endl;
+	cout.flags(f);
 } // End PICC_DumpDetailsToSerial()
 
 /**
@@ -1092,18 +1092,22 @@ void MFRC522Extended::PICC_DumpDetailsToSerial(TagInfo *tag	///< Pointer to TagI
  */
 void MFRC522Extended::PICC_DumpISO14443_4(TagInfo *tag)
 {
+	// Saving flags so we can change to hex formatting and back
+	std::ios_base::fmtflags f(cout.flags());
+
 	// ATS
 	if (tag->ats.size > 0x00) {	// The first byte is the ATS length including the length byte
-		Serial.print(F("Card ATS:"));
+		cout << "Card ATS:";
 		for (uint8_t offset = 0; offset < tag->ats.size; offset++) {
 			if (tag->ats.data[offset] < 0x10)
-				Serial.print(F(" 0"));
+				cout << " 0";
 			else
-				Serial.print(F(" "));
-			Serial.print(tag->ats.data[offset], HEX);
+				cout << " ";
+			cout << hex << tag->ats.data[offset] << dec; 
 		}
-		Serial.println();
+		cout << endl;
 	}
+	cout.flags(f);
 	
 } // End PICC_DumpISO14443_4
 
@@ -1172,7 +1176,7 @@ bool MFRC522Extended::PICC_ReadCardSerial() {
 	// Backward compatibility
 	uid.size = tag.uid.size;
 	uid.sak = tag.uid.sak;
-	memcpy(uid.uiduint8_t, tag.uid.uiduint8_t, sizeof(tag.uid.uiduint8_t));
+	memcpy(uid.uidByte, tag.uid.uidByte, sizeof(tag.uid.uidByte));
 
 	return (result == STATUS_OK);
 } // End 
