@@ -38,4 +38,4 @@ install: $(BUILD_DIR)/$(NAME) clean
 	install -D -m 644 $(BUILD_DIR)/$(NAME) $(DESTDIR)$(PREFIX)/lib
 	install -D -m 644 $(addprefix $(SRC_DIR)/,$(H_FILES)) $(DESTDIR)$(PREFIX)/include
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re install
