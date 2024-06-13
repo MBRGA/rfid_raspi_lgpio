@@ -270,9 +270,9 @@ public:
 	/////////////////////////////////////////////////////////////////////////////////////
 	// Functions for setting up the Arduino
 	/////////////////////////////////////////////////////////////////////////////////////
-	MFRC522();
-	MFRC522(int resetPowerDownPin);
-	MFRC522(int chipSelectPin, int resetPowerDownPin);
+	MFRC522(int gpioHandle, int spiHandle);
+	MFRC522(int resetPowerDownPin, int gpioHandle, int spiHandle);
+	MFRC522(int chipSelectPin, int resetPowerDownPin, int gpioHandle, int spiHandle);
 	
 	/////////////////////////////////////////////////////////////////////////////////////
 	// Basic interface functions for communicating with the MFRC522

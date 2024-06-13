@@ -33,7 +33,7 @@ using std::dec;
 /**
  * Constructor.
  */
-MFRC522::MFRC522() : MFRC522(SS, UINT8_MAX)
+MFRC522::MFRC522(int gpioHandle, int spiHandle) : MFRC522(SS, UINT8_MAX, gpioHandle, spiHandle)
 { // SS is defined in pins_arduino.h, UINT8_MAX means there is no connection from Arduino to MFRC522's reset and power down input
 } // End constructor
 
@@ -41,8 +41,10 @@ MFRC522::MFRC522() : MFRC522(SS, UINT8_MAX)
  * Constructor.
  * Prepares the output pins.
  */
-MFRC522::MFRC522(int resetPowerDownPin ///< Arduino pin connected to MFRC522's reset and power down input (Pin 6, NRSTPD, active low). If there is no connection from the CPU to NRSTPD, set this to UINT8_MAX. In this case, only soft reset will be used in PCD_Init().
-				 ) : MFRC522(SS, resetPowerDownPin)
+MFRC522::MFRC522(int resetPowerDownPin, ///< Arduino pin connected to MFRC522's reset and power down input (Pin 6, NRSTPD, active low). If there is no connection from the CPU to NRSTPD, set this to UINT8_MAX. In this case, only soft reset will be used in PCD_Init().
+				 int gpioHandle, 
+				 int spiHandle
+				 ) : MFRC522(SS, resetPowerDownPin, gpioHandle, spiHandle)
 { // SS is defined in pins_arduino.h
 } // End constructor
 
@@ -51,11 +53,15 @@ MFRC522::MFRC522(int resetPowerDownPin ///< Arduino pin connected to MFRC522's r
  * Prepares the output pins.
  */
 MFRC522::MFRC522(int chipSelectPin,	///< Arduino pin connected to MFRC522's SPI slave select input (Pin 24, NSS, active low)
-				 int resetPowerDownPin ///< Arduino pin connected to MFRC522's reset and power down input (Pin 6, NRSTPD, active low). If there is no connection from the CPU to NRSTPD, set this to UINT8_MAX. In this case, only soft reset will be used in PCD_Init().
+				 int resetPowerDownPin, ///< Arduino pin connected to MFRC522's reset and power down input (Pin 6, NRSTPD, active low). If there is no connection from the CPU to NRSTPD, set this to UINT8_MAX. In this case, only soft reset will be used in PCD_Init().
+				 int gpioHandle, 
+				 int spiHandle
 )
 {
 	_chipSelectPin = chipSelectPin;
 	_resetPowerDownPin = resetPowerDownPin;
+	_gpioHandle = gpioHandle;
+	_spiHandle = spiHandle;
 } // End constructor
 
 /////////////////////////////////////////////////////////////////////////////////////
