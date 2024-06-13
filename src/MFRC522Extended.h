@@ -77,9 +77,9 @@ public:
 	/////////////////////////////////////////////////////////////////////////////////////
 	// Contructors
 	/////////////////////////////////////////////////////////////////////////////////////
-	MFRC522Extended() : MFRC522() {};
-	MFRC522Extended(uint8_t rst) : MFRC522(rst) {};
-	MFRC522Extended(uint8_t ss, uint8_t rst) : MFRC522(ss, rst) {};
+	MFRC522Extended(int gpioHandle, int spiHandle) : MFRC522(gpioHandle, spiHandle) {};
+	MFRC522Extended(uint8_t rst, int gpioHandle, int spiHandle) : MFRC522(rst, gpioHandle, spiHandle) {};
+	MFRC522Extended(uint8_t ss, uint8_t rst, int gpioHandle, int spiHandle) : MFRC522(ss, rst, gpioHandle, spiHandle) {};
 	
 	/////////////////////////////////////////////////////////////////////////////////////
 	// Functions for communicating with PICCs
