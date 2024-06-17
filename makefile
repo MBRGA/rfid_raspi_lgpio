@@ -22,7 +22,7 @@ $(BUILD_DIR)/$(NAME): $(OBJ_FILES)
 	mkdir -p $(dir $@)
 	ar rcs $(BUILD_DIR)/$(NAME) $(OBJ_FILES)
 
-$(OBJ_FILES): $(SRC_FILES)
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
