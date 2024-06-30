@@ -373,7 +373,7 @@ void MFRC522::PCD_Reset()
 	do
 	{
 		// Wait for the PowerDown bit in CommandReg to be cleared (max 3x50ms)
-		usleep(50);
+		usleep(50000);
 	} while ((static_cast<char>(PCD_ReadRegister(CommandReg)) & (1 << 4)) && (++count) < 3);
 } // End PCD_Reset()
 
