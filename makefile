@@ -1,6 +1,6 @@
 CXX = g++
 
-CXXFLAGS = -Wall -Wextra -Werror
+override CXXFLAGS += -Wall -Wextra -Werror
 
 SRC_DIR = ./src
 BUILD_DIR = ./build
